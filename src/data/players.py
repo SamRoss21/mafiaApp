@@ -32,3 +32,11 @@ async def set_players(players_csv: str):
                 file.write(players_csv)
         except FileNotFoundError:
             print('Error: No Player File')
+
+async def save_players():
+    if filepath and filename:
+        try:
+            with open(filepath+filename, "w") as file:
+                file.write(",".join(str(item) for item in players.players))
+        except FileNotFoundError:
+            print('Error: No Player File')
