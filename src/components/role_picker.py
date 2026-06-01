@@ -14,7 +14,6 @@ async def decrease_role(role_name):
     await roles.remove_role(role_name)
     setup.role_list.refresh()
     role_count.refresh()
-    return
 
 #widget displaying current count for the given role name
 @ui.refreshable
@@ -24,7 +23,7 @@ def role_count(role_name):
 #widget for increasing/decreasing the count of a given role
 @ui.refreshable
 async def role_entry(role_name):
-    with ui.row().classes('items-center w-64 pb-1'):
+    with ui.row().classes('items-center w-70 pb-1'):
         ui.label(role_name).classes('text-grey-7 pl-4')
         ui.space()
         with ui.button(color=None, on_click=partial(decrease_role, role_name)).props('round size=xs flat'):

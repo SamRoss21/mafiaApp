@@ -284,6 +284,24 @@ modifiers = [
     "Beloved",
 ]
 
+items = {
+    "Enthralling Book": "an Enthralling Book",
+    "Crystal Ball": "a Crystal Ball",
+    "TNT": "TNT",
+    "Glitter Bomb": "a Glitter Bomb",
+    "Hot Potato": "a Hot Potato",
+    "Zombie Bombie": "a Zombie Bombie",
+    "Night Stone": "a Night Stone",
+    "Day Stone": "a Day Stone",
+    "Gun": "a Gun",
+    "Knife": "a Knife",
+    "Dead Man’s Switch": "a Dead Man’s Switch",
+    "Energy Drink": "an Energy Drink",
+    "Tequila": "Tequila",
+    "Narcissus’s Mirror": "Narcissus’s Mirror",
+    "Elixir of Immortality": "an Elixir of Immortality",
+}
+
 # TODO: replace with call to mafia-bot
 verbs = [
     "block",

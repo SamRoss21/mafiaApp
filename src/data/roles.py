@@ -13,6 +13,8 @@ async def load_roles(name: str):
     filename = f'{name}_roles.txt'
     global roles
     global role_counts
+    roles = []
+    role_counts = {}
     try:
         with open(filepath+filename, "r") as file:
             for line in file:
@@ -29,6 +31,7 @@ async def load_roles(name: str):
 async def add_role(role_name: str):
     global role_counts
     roles.append(role.Role(role_name))
+    print(roles)
     role_counts[role_name] = role_counts.get(role_name, 0) + 1
     await save_roles()
 

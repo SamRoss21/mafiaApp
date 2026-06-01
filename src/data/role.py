@@ -3,20 +3,21 @@ from src.data import role_definitions, roles
 
 class Role:
     def __init__(
-        self, role_name, targets=-1, alignment="", verbs=[], modifiers=[], sub_roles={}
+        self, role_name, targets=None, alignment=None, verbs=None, modifiers=None, sub_roles=None, items=None
     ):
         self.role_name = role_name
         self.targets = (
-            role_definitions.roles[role_name]["targets"] if targets is -1 else targets
+            role_definitions.roles[role_name]["targets"] if targets is None else targets
         )
         self.alignment = (
             role_definitions.roles[role_name]["default_alignment"]
-            if alignment == ""
+            if alignment is None
             else alignment
         )
-        self.verbs = role_definitions.roles[role_name]["verbs"] if verbs is [] else verbs
-        self.modifiers = modifiers
-        self.sub_roles = sub_roles
+        self.verbs = role_definitions.roles[role_name]["verbs"] if verbs is None else verbs
+        self.modifiers = [] if modifiers is None else modifiers
+        self.sub_roles = {} if sub_roles is None else sub_roles
+        self.items = [] if items is None else items
 
     @classmethod
     def from_json(cls, json_str):
@@ -28,7 +29,8 @@ class Role:
                 alignment=role_data["alignment"],
                 verbs=role_data["verbs"],
                 modifiers=role_data["modifiers"],
-                sub_roles=role_data["sub_roles"]
+                sub_roles=role_data["sub_roles"],
+                items=role_data["items"]
             )
         except json.JSONDecodeError:
             print(f"Skipping malformed JSON line: {json_str}")
@@ -53,6 +55,7 @@ class Role:
             await roles.save_roles()
 
     async def addModifier(self, modifier):
+        print("added modifier")
         if modifier not in self.modifiers:
             self.modifiers.append(modifier)
             await roles.save_roles()
@@ -70,6 +73,17 @@ class Role:
         if role.role_name in self.sub_roles.keys():
             self.sub_roles.pop(role.role_name)
 
+    async def addItem(self, item):
+        print("added modifier")
+        if item not in self.items:
+            self.items.append(item)
+            await roles.save_roles()
+    
+    async def removeItem(self, item):
+        if item in self.items:
+            self.items.remove(item)
+            await roles.save_roles()
+
     def role_title(self):
         name_string = ""
         name_string += f"{self.alignment} "
@@ -82,6 +96,12 @@ class Role:
             for sub_role in sub_roles[:-1]:
                 name_string += f"{sub_role}, "
             name_string += f"{sub_roles[-1]})"
+        if len(self.items) == 1:
+            name_string += f" with {role_definitions.items[self.items[0]]}"
+        elif len(self.items) > 1:
+            for item in self.items[:-1]:
+                name_string += f" {role_definitions.items[item]},"
+            name_string += f" and {role_definitions.items[self.items[-1]]}"
         return name_string
 
     def toString(self):
@@ -91,6 +111,7 @@ class Role:
             "alignment": self.alignment,
             "verbs": self.verbs,
             "modifiers": self.modifiers,
-            "sub_roles": self.sub_roles
+            "sub_roles": self.sub_roles,
+            "items": self.items
         }
         return json.dumps(role_json, default=str)

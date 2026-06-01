@@ -1,5 +1,4 @@
-{"role_name": "Time Traveller", "targets": 1, "alignment": "Mafia", "verbs": [], "modifiers": [], "sub_roles": {}}
-{"role_name": "Survivor", "targets": 0, "alignment": "3rd Party", "verbs": [], "modifiers": ["Graverobbing"], "sub_roles": {}}
-{"role_name": "Jailkeeper", "targets": 1, "alignment": "Town", "verbs": [], "modifiers": [], "sub_roles": {}}
-{"role_name": "Bus Driver", "targets": 2, "alignment": "Town", "verbs": [], "modifiers": [], "sub_roles": {}}
-{"role_name": "Trolley Driver", "targets": 2, "alignment": "Town", "verbs": [], "modifiers": [], "sub_roles": {}}
+{"role_name": "Janitor", "targets": 1, "alignment": "Town", "verbs": ["janitor"], "modifiers": [], "sub_roles": {}, "items": []}
+{"role_name": "Doctor", "targets": 1, "alignment": "Town", "verbs": ["doctor"], "modifiers": [], "sub_roles": {}, "items": ["Glitter Bomb"]}
+{"role_name": "Hider", "targets": 1, "alignment": "Town", "verbs": ["hide"], "modifiers": [], "sub_roles": {}, "items": []}
+{"role_name": "Jack of All Trades", "targets": 1, "alignment": "Town", "verbs": ["investigate", "protect", "roleblock", "kill"], "modifiers": [], "sub_roles": {}, "items": []}

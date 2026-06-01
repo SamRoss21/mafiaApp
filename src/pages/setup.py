@@ -60,6 +60,45 @@ async def role_list():
             role_row(role)
     card.make_sortable(handle='.handle', on_end=handle_role_reorder)
 
+#Dialog for adding player names    
+async def show_player_popup():
+    with ui.dialog() as player_dialog, ui.card():
+        ui.label('Add Players')
+        user_input = ui.textarea(value = ",".join(str(item) for item in players.players), placeholder='Insert player names in CSV format')
+        with ui.row():
+            ui.button('Cancel', on_click=lambda: player_dialog.submit(None))
+            ui.button('Save', on_click=lambda: player_dialog.submit(user_input.value))
+    result = await player_dialog
+    if result != None:
+        await players.set_players(result)
+    player_dialog.clear()
+    player_list.refresh()
+
+#Dialog for adding roles
+async def show_roles_popup():
+    with ui.dialog() as role_dialog, ui.card().classes('w-100'):
+        await role_picker.role_picker()
+        ui.button('Close', on_click=lambda: role_dialog.submit(None))
+    result = await role_dialog
+
+#re-order the list of players when user drags player names
+async def handle_player_reorder(e):
+    # e.old_index and e.new_index are available SortableEventArguments
+    moved_item = players.players.pop(e.old_index)
+    players.players.insert(e.new_index, moved_item)
+    await players.save_players()
+
+#reorderable list of player names
+@ui.refreshable
+def player_list():
+    with ui.card().classes('w-100') as card:
+        for player in players.players:
+            with ui.row().classes('items-center gap-2 h-6 w-50 border-b border-gray-300'):
+                ui.icon('drag_indicator') \
+                    .classes('handle cursor-grab active:cursor-grabbing')
+                ui.label(player)
+    card.make_sortable(handle='.handle', on_end=handle_player_reorder)
+
 @ui.page('/setup/{name}')
 async def setup(name: str):
     """
@@ -70,55 +109,19 @@ async def setup(name: str):
 
     ui.label(f'Game Setup: {name}')
             
-    #Dialog for adding player names    
-    async def show_player_popup():
-        with ui.dialog() as player_dialog, ui.card():
-            ui.label('Add Players')
-            user_input = ui.textarea(value = ",".join(str(item) for item in players.players), placeholder='Insert player names in CSV format')
-            with ui.row():
-                ui.button('Cancel', on_click=lambda: player_dialog.submit(None))
-                ui.button('Save', on_click=lambda: player_dialog.submit(user_input.value))
-        result = await player_dialog
-        if result != None:
-            await players.set_players(result)
-        player_dialog.clear()
-        player_list.refresh()
+    with ui.scroll_area().classes('h-110 w-full'):
+        with ui.row().classes('no-wrap items-center justify-center w-full'):
+            with ui.column().classes('h-100 gap-0'):
+                with ui.button(color=None, on_click=show_player_popup).classes('pl-1 pr-2').props('flat'):
+                    with ui.row().classes('gap-0'):
+                        ui.icon('sym_r_add')
+                        ui.label('Add Players')
+                player_list()
+            with ui.column().classes("h-100 gap-0"):
+                with ui.button(color=None, on_click=show_roles_popup).classes('pl-1 pr-2').props('flat'):
+                    with ui.row().classes('gap-0'):
+                        ui.icon('sym_r_add')
+                        ui.label('Add Roles')
+                await role_list()
 
-    ui.button('Add Players', on_click=show_player_popup)
-
-    #Dialog for adding roles
-    async def show_roles_popup():
-        with ui.dialog() as role_dialog, ui.card().classes('w-100'):
-            await role_picker.role_picker()
-            ui.button('Close', on_click=lambda: role_dialog.submit(None))
-        result = await role_dialog
-
-    ui.button('Add Roles', on_click=show_roles_popup)
-
-    #re-order the list of players when user drags player names
-    async def handle_player_reorder(e):
-        # e.old_index and e.new_index are available SortableEventArguments
-        moved_item = players.players.pop(e.old_index)
-        players.players.insert(e.new_index, moved_item)
-        await players.save_players()
-
-
-
-    #reorderable list of player names
-    @ui.refreshable
-    def player_list():
-        with ui.card() as card:
-            for player in players.players:
-                with ui.row().classes('items-center gap-2 h-6 w-50 border-b border-gray-300'):
-                    ui.icon('drag_indicator') \
-                        .classes('handle cursor-grab active:cursor-grabbing')
-                    ui.label(player)
-        card.make_sortable(handle='.handle', on_end= handle_player_reorder)
-
-    
-
-    with ui.row():
-        player_list()
-        await role_list()
-
-    ui.button('Start Game', on_click=lambda: ui.navigate.to(f'/gameplay/{name}'))
+    # ui.button('Start Game', on_click=lambda: ui.navigate.to(f'/gameplay/{name}'))
