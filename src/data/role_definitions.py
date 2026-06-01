@@ -15,253 +15,303 @@
 
 """
 
-#Note - Mafia goon kills are not included here among verb options
+# Note - Mafia goon kills are not included here among verb options
 roles = {
     "Roleblocker": {
-        "verbs": ["block"], 
+        "verbs": ["block"],
         "targets": 1,
-        "default_alignment":"Mafia",
-        "category":"Mischief"
-        },
+        "default_alignment": "Mafia",
+        "category": "Mischief",
+    },
     "Jailkeeper": {
-        "verbs": ["jailkeep"], 
+        "verbs": ["jailkeep"],
         "targets": 1,
-        "default_alignment":"Town",
-        "category":"Mischief"
-        },
+        "default_alignment": "Town",
+        "category": "Mischief",
+    },
     "Loki Bus Driver": {
-        "verbs": ["loki_bus_drive"], 
+        "verbs": ["loki_bus_drive"],
         "targets": 2,
-        "default_alignment":"Mafia",
-        "category":"Mischief"
-        },
+        "default_alignment": "Mafia",
+        "category": "Mischief",
+    },
     "Bus Driver": {
-        "verbs": ["bus_drive"], 
+        "verbs": ["bus_drive"],
         "targets": 2,
-        "default_alignment":"Town",
-        "category":"Mischief"
-        },
+        "default_alignment": "Town",
+        "category": "Mischief",
+    },
     "Trolley Driver": {
-        "verbs": ["trolley_drive"], 
+        "verbs": ["trolley_drive"],
         "targets": 2,
-        "default_alignment":"Town",
-        "category":"Mischief"
-        },
+        "default_alignment": "Town",
+        "category": "Mischief",
+    },
     "Mailman": {
-        "verbs": ["mail"], 
+        "verbs": ["mail"],
         "targets": 2,
-        "default_alignment":"Town",
-        "category":"Mischief"
-        },
+        "default_alignment": "Town",
+        "category": "Mischief",
+    },
     "Time Traveller": {
-        "verbs": ["kick_out_of_time", "speed_up", "slow_down"], 
+        "verbs": ["kick_out_of_time", "speed_up", "slow_down"],
         "targets": 1,
-        "default_alignment":"Mafia",
-        "category":"Mischief"
-        },
+        "default_alignment": "Mafia",
+        "category": "Mischief",
+    },
     "Doctor": {
-        "verbs": ["doctor"], 
+        "verbs": ["doctor"],
         "targets": 1,
-        "default_alignment":"Town",
-        "category":"Life & Death"
-        },
+        "default_alignment": "Town",
+        "category": "Life & Death",
+    },
     "Bodyguard": {
-        "verbs": ["bodyguard"], 
+        "verbs": ["bodyguard"],
         "targets": 1,
-        "default_alignment":"Town",
-        "category":"Life & Death"
-        },
+        "default_alignment": "Town",
+        "category": "Life & Death",
+    },
     "Elite Bodyguard": {
-        "verbs": ["elite_bodyguard"], 
+        "verbs": ["elite_bodyguard"],
         "targets": 1,
-        "default_alignment":"Town",
-        "category":"Life & Death"
-        },
+        "default_alignment": "Town",
+        "category": "Life & Death",
+    },
     "Framer": {
-        "verbs": ["frame"], 
+        "verbs": ["frame"],
         "targets": 1,
-        "default_alignment":"Mafia",
-        "category":"Mischief"
-        },
+        "default_alignment": "Mafia",
+        "category": "Mischief",
+    },
     "Imposter": {
-        "verbs": ["imposter"], 
+        "verbs": ["imposter"],
         "targets": 2,
-        "default_alignment":"Mafia",
-        "category":"Mischief"
-        },
+        "default_alignment": "Mafia",
+        "category": "Mischief",
+    },
     "Doubler": {
-        "verbs": ["double"], 
+        "verbs": ["double"],
         "targets": 1,
-        "default_alignment":"Town",
-        "category":"Flexible"
-        },
+        "default_alignment": "Town",
+        "category": "Flexible",
+    },
     "Hider": {
-        "verbs": ["hide"], 
+        "verbs": ["hide"],
         "targets": 1,
-        "default_alignment":"Town",
-        "category":"Life & Death"
-        },
+        "default_alignment": "Town",
+        "category": "Life & Death",
+    },
     "Poisoner": {
-        "verbs": ["poison"], 
+        "verbs": ["poison"],
         "targets": 1,
-        "default_alignment":"Mafia",
-        "category":"Sneaky"
-        },
+        "default_alignment": "Mafia",
+        "category": "Sneaky",
+    },
     "Ninja": {
-        "verbs": ["ninja_kill"], 
+        "verbs": ["ninja_kill"],
         "targets": 1,
-        "default_alignment":"Mafia",
-        "category":"Sneaky"
-        },
+        "default_alignment": "Mafia",
+        "category": "Sneaky",
+    },
     "Janitor": {
-        "verbs": ["janitor"], 
+        "verbs": ["janitor"],
         "targets": 1,
-        "default_alignment":"Mafia",
-        "category":"Killers"
-        },
+        "default_alignment": "Mafia",
+        "category": "Killers",
+    },
     "CPR Doctor": {
-        "verbs": ["CPR"], 
+        "verbs": ["CPR"],
         "targets": 1,
-        "default_alignment":"Town",
-        "category":"Life & Death"
-        },
+        "default_alignment": "Town",
+        "category": "Life & Death",
+    },
     "Hitman": {
-        "verbs": ["hitman"], 
+        "verbs": ["hitman"],
         "targets": 1,
-        "default_alignment":"Mafia",
-        "category":"Killers"
-        },
+        "default_alignment": "Mafia",
+        "category": "Killers",
+    },
     "Private Investigator": {
-        "verbs": ["investigate"], 
+        "verbs": ["investigate"],
         "targets": 1,
-        "default_alignment":"Town",
-        "category":"Information"
-        },
+        "default_alignment": "Town",
+        "category": "Information",
+    },
     "Role Investigator": {
-        "verbs": ["role_investigate"], 
+        "verbs": ["role_investigate"],
         "targets": 1,
-        "default_alignment":"Town",
-        "category":"Information"
-        },
+        "default_alignment": "Town",
+        "category": "Information",
+    },
     "Tracker": {
-        "verbs": ["track"], 
+        "verbs": ["track"],
         "targets": 1,
-        "default_alignment":"Town",
-        "category":"Information"
-        },
+        "default_alignment": "Town",
+        "category": "Information",
+    },
     "Watcher": {
-        "verbs": ["watch"], 
+        "verbs": ["watch"],
         "targets": 1,
-        "default_alignment":"Town",
-        "category":"Information"
-        },
+        "default_alignment": "Town",
+        "category": "Information",
+    },
     "Forensic Investigator": {
-        "verbs": ["forensic_investigate"], 
+        "verbs": ["forensic_investigate"],
         "targets": 1,
-        "default_alignment":"Town",
-        "category":"Information"
-        },
+        "default_alignment": "Town",
+        "category": "Information",
+    },
     "Surveillance Officer": {
-        "verbs": ["surveil"], 
+        "verbs": ["surveil"],
         "targets": 1,
-        "default_alignment":"Town",
-        "category":"Information"
-        },
+        "default_alignment": "Town",
+        "category": "Information",
+    },
     "Journalist": {
-        "verbs": ["journal"], 
+        "verbs": ["journal"],
         "targets": 1,
-        "default_alignment":"Town",
-        "category":"Information"
-        },
+        "default_alignment": "Town",
+        "category": "Information",
+    },
     "Godfather": {
-        "verbs": [], 
+        "verbs": [],
         "targets": 1,
-        "default_alignment":"Mafia",
-        "category":"Leaders"
-        },
+        "default_alignment": "Mafia",
+        "category": "Leaders",
+    },
     "Monarch": {
-        "verbs": ["bus_drive"], 
+        "verbs": ["bus_drive"],
         "targets": 1,
-        "default_alignment":"Mafia",
-        "category":"Leaders"
-        },
+        "default_alignment": "Mafia",
+        "category": "Leaders",
+    },
     "Warlord": {
-        "verbs": [], 
+        "verbs": [],
         "targets": 1,
-        "default_alignment":"Mafia",
-        "category":"Leaders"
-        },
+        "default_alignment": "Mafia",
+        "category": "Leaders",
+    },
     "Lone Wolf": {
-        "verbs": [], #will be assigned by mod
+        "verbs": [],  # will be assigned by mod
         "targets": 1,
-        "default_alignment":"Mafia",
-        "category":"Misc"
-        },
+        "default_alignment": "Mafia",
+        "category": "Misc",
+    },
     "Survivor": {
-        "verbs": [], 
+        "verbs": [],
         "targets": 0,
-        "default_alignment":"3rd Party",
-        "category":"None"
-        },
+        "default_alignment": "3rd Party",
+        "category": "None",
+    },
     "Serial Killer": {
-        "verbs": ["kill"], 
+        "verbs": ["kill"],
         "targets": 1,
-        "default_alignment":"3rd Party",
-        "category":"None"
-        },
+        "default_alignment": "3rd Party",
+        "category": "None",
+    },
     "Sheriff": {
-        "verbs": [], 
+        "verbs": [],
         "targets": 0,
-        "default_alignment":"Town",
-        "category":"Information"
-        },
+        "default_alignment": "Town",
+        "category": "Information",
+    },
     "Vigilante": {
-        "verbs": ['kill'], 
+        "verbs": ["kill"],
         "targets": 1,
-        "default_alignment":"Town",
-        "category":"Life & Death"
-        },
+        "default_alignment": "Town",
+        "category": "Life & Death",
+    },
     "Jack of All Trades": {
-        "verbs": ['investigate', 'protect', 'roleblock', 'kill'], 
+        "verbs": ["investigate", "protect", "roleblock", "kill"],
         "targets": 1,
-        "default_alignment":"Town",
-        "category":"Flexible"
-        },
+        "default_alignment": "Town",
+        "category": "Flexible",
+    },
     "Rando": {
-        "verbs": ['investigate', 'protect', 'roleblock', 'kill'], 
+        "verbs": ["investigate", "protect", "roleblock", "kill"],
         "targets": 1,
-        "default_alignment":"Town",
-        "category":"Flexible"
-        },
+        "default_alignment": "Town",
+        "category": "Flexible",
+    },
     "Handyman": {
-        "verbs": [], 
+        "verbs": [],
         "targets": -1,
-        "default_alignment":"Town",
-        "category":"Flexible"
-        },
+        "default_alignment": "Town",
+        "category": "Flexible",
+    },
     "Bomb": {
-        "verbs": [], 
+        "verbs": [],
         "targets": 0,
-        "default_alignment":"Town",
-        "category":"Stationary"
-        },
+        "default_alignment": "Town",
+        "category": "Stationary",
+    },
     "Governor": {
-        "verbs": [], 
+        "verbs": [],
         "targets": 0,
-        "default_alignment":"Town",
-        "category":"Stationary"
-        },
+        "default_alignment": "Town",
+        "category": "Stationary",
+    },
     "Mason": {
-        "verbs": [], 
+        "verbs": [],
         "targets": 0,
-        "default_alignment":"Town",
-        "category":"Stationary"
-        },
+        "default_alignment": "Town",
+        "category": "Stationary",
+    },
     "Paranoid Gun Owner": {
-        "verbs": [], 
+        "verbs": [],
         "targets": 0,
-        "default_alignment":"Town",
-        "category":"Stationary"
-        },
-    
+        "default_alignment": "Town",
+        "category": "Stationary",
+    },
 }
+
+modifiers = [
+    "Bulletproof",
+    "Commuting",
+    "Double-Voting",
+    "No-Voting",
+    "Nega-Voting",
+    "Gambling",
+    "Graverobbing",
+    "Introverted",
+    "Extroverted",
+    "Over-eager",
+    "Paranoid",
+    "Suspicious",
+    "Black Hole",
+    "Fate-Bonded",
+    "Insomniac",
+    "Beloved",
+]
+
+# TODO: replace with call to mafia-bot
+verbs = [
+    "block",
+    "jailkeep",
+    "loki_bus_drive",
+    "bus_drive",
+    "batch_bus_drive",
+    "trolley_drive",
+    "mail",
+    "kick_out_of_time",
+    "doctor",
+    "bodyguard",
+    "elite_bodyguard",
+    "frame",
+    "imposter",
+    "double",
+    "hide",
+    "kill",
+    "poison",
+    "ninja_kill",
+    "janitor",
+    "CPR",
+    "hitman",
+    "investigate",
+    "role_investigate",
+    "track",
+    "watch",
+    "forensic_investigate",
+    "surveil",
+    "journal",
+]

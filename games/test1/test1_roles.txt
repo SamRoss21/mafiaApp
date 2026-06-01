@@ -1,3 +1,5 @@
-{"role_name": "Warlord", "targets": 1, "alignment": "Mafia", "verbs": [], "modifiers": [null]}
-{"role_name": "Monarch", "targets": 1, "alignment": "Mafia", "verbs": ["bus_drive"], "modifiers": [null]}
-{"role_name": "Lone Wolf", "targets": 1, "alignment": "Mafia", "verbs": [], "modifiers": [null]}
+{"role_name": "Time Traveller", "targets": 1, "alignment": "Mafia", "verbs": [], "modifiers": [], "sub_roles": {}}
+{"role_name": "Survivor", "targets": 0, "alignment": "3rd Party", "verbs": [], "modifiers": ["Graverobbing"], "sub_roles": {}}
+{"role_name": "Jailkeeper", "targets": 1, "alignment": "Town", "verbs": [], "modifiers": [], "sub_roles": {}}
+{"role_name": "Bus Driver", "targets": 2, "alignment": "Town", "verbs": [], "modifiers": [], "sub_roles": {}}
+{"role_name": "Trolley Driver", "targets": 2, "alignment": "Town", "verbs": [], "modifiers": [], "sub_roles": {}}
