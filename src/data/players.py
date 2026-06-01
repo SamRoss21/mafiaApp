@@ -1,4 +1,3 @@
-from nicegui import ui
 import csv
 
 players = []
@@ -37,6 +36,6 @@ async def save_players():
     if filepath and filename:
         try:
             with open(filepath+filename, "w") as file:
-                file.write(",".join(str(item) for item in players.players))
+                file.write(",".join(str(item) for item in players))
         except FileNotFoundError:
             print('Error: No Player File')

@@ -1,0 +1,3 @@
+{"role_name": "Warlord", "targets": 1, "alignment": "Mafia", "verbs": [], "modifiers": [null]}
+{"role_name": "Monarch", "targets": 1, "alignment": "Mafia", "verbs": ["bus_drive"], "modifiers": [null]}
+{"role_name": "Lone Wolf", "targets": 1, "alignment": "Mafia", "verbs": [], "modifiers": [null]}
