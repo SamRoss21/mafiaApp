@@ -9,10 +9,11 @@ async def load_players(name: str):
     filepath = f'./games/{name}/'
     global filename
     filename = f'{name}_players.csv'
+    global players
+    players = []
     try:
         with open(filepath+filename, "r") as file:
             content = csv.reader(file)
-            global players 
             players = next(content, [])
     except FileNotFoundError:
         # Create the file because it does not exist
@@ -20,7 +21,6 @@ async def load_players(name: str):
             file.write("")
 
 async def set_players(players_csv: str):
-    print(players_csv)
     players_csv = "" if players_csv is None else players_csv;
     global players
     players = players_csv.split(',')

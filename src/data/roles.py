@@ -31,7 +31,6 @@ async def load_roles(name: str):
 async def add_role(role_name: str):
     global role_counts
     roles.append(role.Role(role_name))
-    print(roles)
     role_counts[role_name] = role_counts.get(role_name, 0) + 1
     await save_roles()
 
@@ -49,7 +48,7 @@ async def remove_role(role_name: str):
 async def remove_exact_role(role_json: str):
     global role_counts
     for role in roles:
-        if(role.toString() == role_json):
+        if(role.__str__() == role_json):
             roles.remove(role)
             role_counts[role.role_name] = max(0, (role_counts.get(role.role_name, 1) - 1))
             break
@@ -61,6 +60,6 @@ async def save_roles():
         try:
             with open(filepath+filename, "w") as file:
                 for role in roles:
-                    file.write(f"{role.toString()}\n")
+                    file.write(f"{role}\n")
         except FileNotFoundError:
             print('Error: No Roles File')

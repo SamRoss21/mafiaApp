@@ -1,16 +1,10 @@
 import os
+import random
 from nicegui import ui
 from src.pages import gameplay
 from src.data import players, roles
-from src.components import role_picker, role_settings
+from src.components import role_picker, role_settings, setup_summary
 from functools import partial
-
-#re-order the list of roles when user drags role names
-async def handle_role_reorder(e):
-    # e.old_index and e.new_index are available SortableEventArguments
-    moved_item = roles.roles.pop(e.old_index)
-    roles.roles.insert(e.new_index, moved_item)
-    await roles.save_roles()
 
 @ui.refreshable
 def role_item(role):
@@ -29,8 +23,9 @@ def role_item(role):
             ui.label(role.role_title()).classes('whitespace-nowrap')
 
 async def remove_role(role):
-    await roles.remove_exact_role(role.toString())
+    await roles.remove_exact_role(role.__str__())
     role_list.refresh()
+    setup_summary.setup_summary.refresh()
 
 def role_row(role):
     with ui.row().classes('w-full gap-0'):
@@ -73,6 +68,7 @@ async def show_player_popup():
         await players.set_players(result)
     player_dialog.clear()
     player_list.refresh()
+    setup_summary.setup_summary.refresh()
 
 #Dialog for adding roles
 async def show_roles_popup():
@@ -88,12 +84,29 @@ async def handle_player_reorder(e):
     players.players.insert(e.new_index, moved_item)
     await players.save_players()
 
+#re-order the list of roles when user drags role names
+async def handle_role_reorder(e):
+    # e.old_index and e.new_index are available SortableEventArguments
+    moved_item = roles.roles.pop(e.old_index)
+    roles.roles.insert(e.new_index, moved_item)
+    await roles.save_roles()
+
+async def handle_player_shuffle():
+    random.shuffle(players.players)
+    await players.save_players()
+    player_list.refresh()
+
+async def handle_role_shuffle():
+    random.shuffle(roles.roles)
+    await roles.save_roles()
+    role_list.refresh()
+
 #reorderable list of player names
 @ui.refreshable
 def player_list():
     with ui.card().classes('w-100') as card:
         for player in players.players:
-            with ui.row().classes('items-center gap-2 h-6 w-50 border-b border-gray-300'):
+            with ui.row().classes('items-center gap-2 h-6 w-full border-b border-gray-300'):
                 ui.icon('drag_indicator') \
                     .classes('handle cursor-grab active:cursor-grabbing')
                 ui.label(player)
@@ -107,21 +120,38 @@ async def setup(name: str):
     orders.
     """
 
-    ui.label(f'Game Setup: {name}')
-            
+    ui.label(f'Game Setup: {name}').classes("text-3xl font-bold mb-2")
+        
+    #Widget for displaying selected players and roles and summary
     with ui.scroll_area().classes('h-110 w-full'):
         with ui.row().classes('no-wrap items-center justify-center w-full'):
             with ui.column().classes('h-100 gap-0'):
-                with ui.button(color=None, on_click=show_player_popup).classes('pl-1 pr-2').props('flat'):
-                    with ui.row().classes('gap-0'):
-                        ui.icon('sym_r_add')
-                        ui.label('Add Players')
+                with ui.row().classes('w-full'):
+                    with ui.button(color=None, on_click=show_player_popup).classes('pl-1 pr-2').props('flat'):
+                        with ui.row().classes('gap-0'):
+                            ui.icon('sym_r_add')
+                            ui.label('Add Players')
+                    ui.space()
+                    with ui.button(color=None, on_click=handle_player_shuffle).classes('pl-2 pr-2').props('flat'):
+                        ui.icon('sym_r_casino').classes('p-0 gap-0 text-grey-9')
                 player_list()
             with ui.column().classes("h-100 gap-0"):
-                with ui.button(color=None, on_click=show_roles_popup).classes('pl-1 pr-2').props('flat'):
-                    with ui.row().classes('gap-0'):
-                        ui.icon('sym_r_add')
-                        ui.label('Add Roles')
+                with ui.row().classes('w-full'):
+                    with ui.button(color=None, on_click=show_roles_popup).classes('pl-1 pr-2').props('flat'):
+                        with ui.row().classes('gap-0'):
+                            ui.icon('sym_r_add')
+                            ui.label('Add Roles')
+                    ui.space()
+                    with ui.button(color=None, on_click=handle_role_shuffle).classes('pl-2 pr-2').props('flat'):
+                        ui.icon('sym_r_casino').classes('p-0 gap-0 text-grey-9')
                 await role_list()
+            with ui.column().classes("h-100 gap-0"):
+                ui.label('Summary').classes("text-uppercase text-weight-medium tracking-wider pt-[7.5px] pb-[7.5px]")
+                setup_summary.setup_summary()
 
-    # ui.button('Start Game', on_click=lambda: ui.navigate.to(f'/gameplay/{name}'))
+    #button to move to game tracking page
+    with ui.button(color=None, on_click=lambda: ui.navigate.to(f'/gameplay/{name}')).classes("fixed bottom-6 right-6 z-50").props('flat'):
+        with ui.row().classes('items-center'):
+            ui.label("Start Game").classes("text-xl font-bold")
+            ui.icon('sym_r_arrow_forward')
+

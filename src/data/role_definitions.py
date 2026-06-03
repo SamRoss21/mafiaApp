@@ -10,7 +10,6 @@
 - Tripple Bus Driver
 - Logic Gate
 - Master of None
-- Inventor
 - Copycat
 
 """
@@ -262,6 +261,12 @@ roles = {
         "targets": 0,
         "default_alignment": "Town",
         "category": "Stationary",
+    },
+    "Inventor": {
+        "verbs": [],
+        "targets": -1,
+        "default_alignment": "Town",
+        "category": "Flexible",
     },
 }
 

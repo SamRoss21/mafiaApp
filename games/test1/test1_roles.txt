@@ -1,4 +1,8 @@
-{"role_name": "Janitor", "targets": 1, "alignment": "Town", "verbs": ["janitor"], "modifiers": [], "sub_roles": {}, "items": []}
-{"role_name": "Doctor", "targets": 1, "alignment": "Town", "verbs": ["doctor"], "modifiers": [], "sub_roles": {}, "items": ["Glitter Bomb"]}
+{"role_name": "Janitor", "targets": 1, "alignment": "Mafia", "verbs": ["janitor"], "modifiers": ["Double-Voting"], "sub_roles": {}, "items": ["Day Stone", "Zombie Bombie"]}
+{"role_name": "Hitman", "targets": 1, "alignment": "Mafia", "verbs": ["hitman"], "modifiers": [], "sub_roles": {}, "items": []}
+{"role_name": "Poisoner", "targets": 1, "alignment": "Mafia", "verbs": ["poison"], "modifiers": [], "sub_roles": {}, "items": []}
+{"role_name": "Serial Killer", "targets": 1, "alignment": "3rd Party", "verbs": ["kill"], "modifiers": [], "sub_roles": {}, "items": []}
+{"role_name": "Doctor", "targets": 1, "alignment": "Town", "verbs": ["doctor"], "modifiers": [], "sub_roles": {}, "items": []}
 {"role_name": "Hider", "targets": 1, "alignment": "Town", "verbs": ["hide"], "modifiers": [], "sub_roles": {}, "items": []}
-{"role_name": "Jack of All Trades", "targets": 1, "alignment": "Town", "verbs": ["investigate", "protect", "roleblock", "kill"], "modifiers": [], "sub_roles": {}, "items": []}
+{"role_name": "Jailkeeper", "targets": 1, "alignment": "Town", "verbs": ["jailkeep"], "modifiers": [], "sub_roles": {}, "items": []}
+{"role_name": "Paranoid Gun Owner", "targets": 0, "alignment": "Town", "verbs": [], "modifiers": [], "sub_roles": {}, "items": []}

@@ -5,6 +5,7 @@
 
 from nicegui import ui
 from src.data import role_definitions, role
+from src.components import setup_summary
 from src.pages import setup
 from functools import partial
 
@@ -18,6 +19,7 @@ async def change_alignment(e, role):
         new_alignment = "Mafia" if e.value is False else "Town"
     await role.updateAlignment(new_alignment)
     setup.role_item.refresh()
+    setup_summary.setup_summary.refresh()
 
 # checkbox for specifying if a town-by-default role should be a mafia role
 async def alignment_check(role):
