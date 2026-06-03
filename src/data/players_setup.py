@@ -1,5 +1,7 @@
 import csv
 
+'''Manages the loading and saving of player names during the setup phase'''
+
 players = []
 filepath = ""
 filename = ""

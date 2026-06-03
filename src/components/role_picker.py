@@ -1,19 +1,19 @@
 from nicegui import ui
-from src.data import role_definitions, roles
+from src.data import role_definitions, roles_setup
 from src.components import setup_summary
 from src.pages import setup
 from functools import partial
 
 #add role to role list
 async def increase_role(role_name):
-    await roles.add_role(role_name)
+    await roles_setup.add_role(role_name)
     setup.role_list.refresh()
     role_count.refresh()
     setup_summary.setup_summary.refresh()
 
 #remove role from role list
 async def decrease_role(role_name):
-    await roles.remove_role(role_name)
+    await roles_setup.remove_role(role_name)
     setup.role_list.refresh()
     role_count.refresh()
     setup_summary.setup_summary.refresh()
@@ -21,7 +21,7 @@ async def decrease_role(role_name):
 #widget displaying current count for the given role name
 @ui.refreshable
 def role_count(role_name):
-    ui.label(roles.role_counts.get(role_name, 0))
+    ui.label(roles_setup.role_counts.get(role_name, 0))
 
 #widget for increasing/decreasing the count of a given role
 @ui.refreshable

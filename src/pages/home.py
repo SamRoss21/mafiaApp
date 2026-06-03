@@ -1,8 +1,7 @@
 from functools import partial
-
 from nicegui import ui
 from src.pages import setup
-from src.data import players, roles
+from src.data import players_setup, roles_setup, game_state
 import os
 from pathlib import Path
 
@@ -26,9 +25,15 @@ async def home_page():
         game_folder = f"./games/{name}"
         if not os.path.exists(game_folder):
             os.mkdir(game_folder)
-        await players.load_players(name)
-        await roles.load_roles(name)
-        ui.navigate.to(f"/setup/{name}")
+        await players_setup.load_players(name)
+        await roles_setup.load_roles(name)
+        #if blank game go to setup, otherwise gameplay
+        if not players_setup.players and not roles_setup.roles:
+            ui.navigate.to(f"/setup/{name}")
+        else:
+            await game_state.load_game(name)
+            ui.navigate.to(f"/gameplay/{name}")
+        
 
     async def show_popup():
         result = await create_dialog

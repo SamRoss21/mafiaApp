@@ -1,5 +1,7 @@
 from src.data import role
 
+'''Manages the loading and saving of roles during the setup phase'''
+
 roles = []
 role_counts = {}
 filepath = ""

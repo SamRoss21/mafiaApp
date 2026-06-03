@@ -1,33 +1,10 @@
 import copy
+from functools import partial
 
 from nicegui import ui
-from src.data import players, roles, role
+from src.data import role, players_setup, roles_setup, game_state
 
-global night_count
-
-def add_night(table):
-    global night_count
-    night_count += 1
-    table.options["columnDefs"].append(
-        {
-            "headerName": f"N{night_count} Action",
-            "field": f"n{night_count} action",
-            "sortable": False,
-        }
-    )
-    table.options["columnDefs"].append(
-        {
-            "headerName": f"N{night_count} Result",
-            "field": f"n{night_count} result",
-            "sortable": False,
-        }
-    )
-
-    for row in table.options["rowData"]:
-        row[f"n{night_count} action"] = ""
-        row[f"n{night_count} result"] = ""
-
-    table.update()
+night_count = 0
 
 
 @ui.page("/gameplay/{name}")
@@ -36,26 +13,31 @@ async def gameplay(name: str):
     Gameplay page. User can record night actions, run the game solver, and
     see the outcomes of each night.
     """
+
     # TODO: add error validation to setup navigation
-    if len(players.players) > len(roles.roles):
+    if len(players_setup.players) > len(roles_setup.roles):
         ui.navigate.to(f"/setup/{name}")
     else:
-        global night_count
-        night_count = 0
         rows = []
-        for index, player in enumerate(players.players):
-            player_role = roles.roles[index]
-            rows.append(
-                {
-                    "id":f'{index}',
-                    "player": f'<div class="cell-container"><span>{player}</span><button class="icon-grid-btn" data-id={index} status="alive" onclick="window.handleGridIconClick(event, this)"><span class="material-symbols-outlined alive-player">skull</span></button></div>',
-                    "role": player_role.role_title(),
-                    "n0 action": "",
-                    "n0 result": "",
-                    "alignment": player_role.alignment,
-                    "dead": False,
-                }
-            )
+        global night_count
+        for id, player in game_state.game_state.items():
+            if id == "0":
+                night_count = len(player.actions) - 1
+            icon = "skull" if player.status == "alive" else "medical_services"
+            row = {
+                "id": f"{id}",
+                "player": f'<div class="cell-container"><span>{player.player_name}</span><button class="icon-grid-btn" data-id={id} status="{player.status}" onclick="window.handleKillIconClick(event, this)"><span class="material-symbols-outlined {player.status}-player">{icon}</span></button></div>',
+                "player_name": player.player_name,
+                "role": player.role.role_title(),
+                "alignment": player.role.alignment,
+                "dead": True if player.status == "dead" else False,
+            }
+            for night in player.actions.keys():
+                row[f"{night} action"] = (
+                    f'<div class="cell-container"><span>{player.actions[night]}</span><button class="icon-grid-btn" data-id={id} night={night_count} onclick="window.handleEditIconClick(event, this)"><span class="material-symbols-outlined {player.status}-player">edit</span></button></div>'
+                )
+                row[f"{night} result"] = player.results[night]
+            rows.append(row)
 
         alignment_comparator = """
             (valueA, valueB, nodeA, nodeB, isDescending) => {
@@ -79,19 +61,23 @@ async def gameplay(name: str):
                 "headerName": "Player",
                 "field": "player",
                 "sortable": False,
+                ":cellRenderer": '(params) => params.value ? params.value : ""',
+                "pinned": "left",
             },
             {
                 "headerName": "Role",
                 "field": "role",
                 "sortable": True,
                 "sort": "asc",
-                'sortingOrder': ['asc', 'desc'],
+                "sortingOrder": ["asc", "desc"],
                 ":comparator": alignment_comparator,
+                "pinned": "left",
             },
             {
                 "headerName": "N0 Action",
                 "field": "n0 action",
                 "sortable": False,
+                ":cellRenderer": '(params) => params.value ? params.value : ""',
             },
             {
                 "headerName": "N0 Result",
@@ -100,7 +86,7 @@ async def gameplay(name: str):
             },
         ]
 
-        #styling to handle row colors for alignment, dead and alive
+        # styling to handle row colors for alignment, dead and alive
         ui.add_head_html("""
         <style>
             .row-mafia {
@@ -133,8 +119,8 @@ async def gameplay(name: str):
         </style>
         """)
 
-        #styles to replicate nicegui button appearance in html/css
-        #script to handle button click events
+        # styles to replicate nicegui button appearance in html/css
+        # script to handle button click events
         ui.add_head_html("""
         <link href="https://googleapis.com" rel="stylesheet">
         <style>
@@ -167,55 +153,101 @@ async def gameplay(name: str):
             }
         </style>
         <script>
-            window.handleGridIconClick = function(event, buttonElement) {
+            window.handleKillIconClick = function(event, buttonElement) {
                 const rowId = buttonElement.getAttribute('data-id');
                 const status = buttonElement.getAttribute('status');
-                if(status == 'alive'){
-                    emitEvent('kill_player_click', { id: parseInt(rowId, 10) });
-                } else {
-                    emitEvent('revive_player_click', { id: parseInt(rowId, 10) });
-                }
+                emitEvent('kill_player_click', { id: rowId, status: status });
+            }
+            window.handleEditIconClick = function(event, buttonElement) {
+                const rowId = buttonElement.getAttribute('data-id');
+                const night = buttonElement.getAttribute('night');
+                emitEvent('edit_night_click', { id: rowId, night: night });
             }
         </script>
         """)
-         
-        def kill_player(e):
-            element_id = e.args['id']
-            for row in table.options['rowData']:
-                if f'data-id={element_id}' in row['player']:
+
+        # manually kill the player, or if they're dead revive them
+        async def kill_player(e):
+            element_id = e.args["id"]
+            status = e.args["status"]
+            for row in table.options["rowData"]:
+                if f"data-id={element_id}" in row["player"]:
                     with table.props.suspend_updates():
-                        row['player'] = row['player'].replace('alive', 'dead').replace('skull', 'medical_services')
-                        row['dead'] = True
+                        if status == "alive":
+                            row["player"] = (
+                                row["player"]
+                                .replace("alive", "dead")
+                                .replace("skull", "medical_services")
+                            )
+                            row["dead"] = True
+                            for night in range(night_count):
+                                row[f"n{night} action"] = row[
+                                    f"n{night} action"
+                                ].replace("alive", "dead")
+                            await game_state.game_state[element_id].updateStatus("dead")
+                        elif status == "dead":
+                            row["player"] = (
+                                row["player"]
+                                .replace("dead", "alive")
+                                .replace("medical_services", "skull")
+                            )
+                            row["dead"] = False
+                            for night in range(night_count):
+                                row[f"n{night} action"] = row[
+                                    f"n{night} action"
+                                ].replace("dead", "alive")
+                            await game_state.game_state[element_id].updateStatus(
+                                "alive"
+                            )
+                        table.run_grid_method("applyTransaction", {"update": [row]})
+                        table.run_grid_method("onSortChanged")
 
-                    table.run_grid_method('applyTransaction', {'update': [row]})
-                    table.run_grid_method('onSortChanged')
+        ui.on("kill_player_click", partial(kill_player))
 
+        # edit night action
+        def edit_night(e):
+            element_id = e.args["id"]
+            night = e.args["night"]
 
-        def revive_player(e):
-            element_id = e.args['id']
-            for row in table.options['rowData']:
-                if f'data-id={element_id}' in row['player']:
-                    with table.props.suspend_updates():
-                        row['player'] = row['player'].replace('dead', 'alive').replace('medical_services','skull')
-                        row['dead'] = False
-                    table.run_grid_method('applyTransaction', {'update': [row]})
-                    table.run_grid_method('onSortChanged')
+        ui.on("edit_night_click", edit_night)
 
+        async def add_night(table):
+            global night_count
+            night_count += 1
+            column_count = len(table.options["columnDefs"])
 
-        # def handle_cell_change(e):
-        #     print("***")
-        #     # Retrieve the updated row data from the event
-        #     updated_row = e.args['data']
-            
-        #     # Run a grid transaction to quietly update the row client-side
-        #     table.run_grid_method('applyTransaction', {'update': [updated_row]})
-            
-        #     # Force the grid to act as if the sort was changed to reorder the rows
-        #     table.run_grid_method('onSortChanged')
+            for row in table.options["rowData"]:
+                status = "dead" if row["dead"] else "alive"
+                row[f"n{night_count} action"] = (
+                    f'<div class="cell-container"><span>---</span><button class="icon-grid-btn" data-id={row['id']} night={night_count} onclick="window.handleEditIconClick(event, this)"><span class="material-symbols-outlined {status}-player">edit</span></button></div>'
+                )
+                row[f"n{night_count} result"] = ""
 
-        ui.on('kill_player_click', kill_player)
-        ui.on('revive_player_click', revive_player)
-        
+                await game_state.game_state[row["id"]].updateActions(
+                    "---", f"n{night_count}"
+                )
+                await game_state.game_state[row["id"]].updateResults(
+                    "---", f"n{night_count}"
+                )
+
+            table.options["columnDefs"].append(
+                {
+                    "headerName": f"N{night_count} Action",
+                    "field": f"n{night_count} action",
+                    "sortable": False,
+                    ":cellRenderer": '(params) => params.value ? params.value : ""',
+                }
+            )
+            table.options["columnDefs"].append(
+                {
+                    "headerName": f"N{night_count} Result",
+                    "field": f"n{night_count} result",
+                    "sortable": False,
+                }
+            )
+
+            table.html_columns.append(column_count)
+            table.update()
 
         with ui.column().classes("w-full h-[calc(100vh-2rem)]"):
             ui.label(f"{name}")
@@ -223,9 +255,8 @@ async def gameplay(name: str):
                 options={
                     "columnDefs": columns,
                     "rowData": rows,
-                    'animateRows': True,
-                    'deltaRowDataMode': True,
-                    ':getRowId': '(params) => params.data.id',
+                    "animateRows": True,
+                    ":getRowId": "(params) => params.data.id",
                     "rowClassRules": {
                         "row-mafia": "data.alignment == 'Mafia'",
                         "row-town": "data.alignment == 'Town'",
@@ -238,11 +269,10 @@ async def gameplay(name: str):
                     },
                 },
                 auto_size_columns=False,
-                html_columns=[0]
+                html_columns=[0, 2],
             ).classes("w-full flex-grow")
             with ui.row().classes("w-full justify-end"):
-                with ui.button(color=None, on_click=lambda: add_night(table)).tooltip(
+                with ui.button(color=None, on_click=partial(add_night, table)).tooltip(
                     "Add Night"
                 ).props("round flat"):
                     ui.icon("sym_r_add")
-

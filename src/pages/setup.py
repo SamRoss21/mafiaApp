@@ -2,7 +2,7 @@ import os
 import random
 from nicegui import ui
 from src.pages import gameplay
-from src.data import players, roles
+from src.data import players_setup, roles_setup, game_state
 from src.components import role_picker, role_settings, setup_summary
 from functools import partial
 
@@ -23,7 +23,7 @@ def role_item(role):
             ui.label(role.role_title()).classes('whitespace-nowrap')
 
 async def remove_role(role):
-    await roles.remove_exact_role(role.__str__())
+    await roles_setup.remove_exact_role(role.__str__())
     role_list.refresh()
     setup_summary.setup_summary.refresh()
 
@@ -51,7 +51,7 @@ async def role_list():
     </style>
 ''')
     with ui.card().classes('w-100') as card:
-        for role in roles.roles:
+        for role in roles_setup.roles:
             role_row(role)
     card.make_sortable(handle='.handle', on_end=handle_role_reorder)
 
@@ -59,13 +59,13 @@ async def role_list():
 async def show_player_popup():
     with ui.dialog() as player_dialog, ui.card():
         ui.label('Add Players')
-        user_input = ui.textarea(value = ",".join(str(item) for item in players.players), placeholder='Insert player names in CSV format')
+        user_input = ui.textarea(value = ",".join(str(item) for item in players_setup.players), placeholder='Insert player names in CSV format')
         with ui.row():
             ui.button('Cancel', on_click=lambda: player_dialog.submit(None))
             ui.button('Save', on_click=lambda: player_dialog.submit(user_input.value))
     result = await player_dialog
     if result != None:
-        await players.set_players(result)
+        await players_setup.set_players(result)
     player_dialog.clear()
     player_list.refresh()
     setup_summary.setup_summary.refresh()
@@ -80,37 +80,40 @@ async def show_roles_popup():
 #re-order the list of players when user drags player names
 async def handle_player_reorder(e):
     # e.old_index and e.new_index are available SortableEventArguments
-    moved_item = players.players.pop(e.old_index)
-    players.players.insert(e.new_index, moved_item)
-    await players.save_players()
+    moved_item = players_setup.players.pop(e.old_index)
+    players_setup.players.insert(e.new_index, moved_item)
+    await players_setup.save_players()
 
 #re-order the list of roles when user drags role names
 async def handle_role_reorder(e):
     # e.old_index and e.new_index are available SortableEventArguments
-    moved_item = roles.roles.pop(e.old_index)
-    roles.roles.insert(e.new_index, moved_item)
-    await roles.save_roles()
+    moved_item = roles_setup.roles.pop(e.old_index)
+    roles_setup.roles.insert(e.new_index, moved_item)
+    await roles_setup.save_roles()
 
 async def handle_player_shuffle():
-    random.shuffle(players.players)
-    await players.save_players()
+    random.shuffle(players_setup.players)
+    await players_setup.save_players()
     player_list.refresh()
 
 async def handle_role_shuffle():
-    random.shuffle(roles.roles)
-    await roles.save_roles()
+    random.shuffle(roles_setup.roles)
+    await roles_setup.save_roles()
     role_list.refresh()
 
 #reorderable list of player names
 @ui.refreshable
 def player_list():
     with ui.card().classes('w-100') as card:
-        for player in players.players:
+        for player in players_setup.players:
             with ui.row().classes('items-center gap-2 h-6 w-full border-b border-gray-300'):
                 ui.icon('drag_indicator') \
                     .classes('handle cursor-grab active:cursor-grabbing')
                 ui.label(player)
     card.make_sortable(handle='.handle', on_end=handle_player_reorder)
+
+
+
 
 @ui.page('/setup/{name}')
 async def setup(name: str):
@@ -119,6 +122,11 @@ async def setup(name: str):
     to roles randomly or manually by arranging or randomizing the player/role 
     orders.
     """
+    async def start_game():
+        if len(players_setup.players) <= len(roles_setup.roles) and len(players_setup.players) > 0:
+            await game_state.init_game(name)
+            ui.navigate.to(f'/gameplay/{name}')
+        #TODO: add popup telling user to make sure there is a role per player
 
     ui.label(f'Game Setup: {name}').classes("text-3xl font-bold mb-2")
         
@@ -150,7 +158,7 @@ async def setup(name: str):
                 setup_summary.setup_summary()
 
     #button to move to game tracking page
-    with ui.button(color=None, on_click=lambda: ui.navigate.to(f'/gameplay/{name}')).classes("fixed bottom-6 right-6 z-50").props('flat'):
+    with ui.button(color=None, on_click=partial(start_game)).classes("fixed bottom-6 right-6 z-50").props('flat'):
         with ui.row().classes('items-center'):
             ui.label("Start Game").classes("text-xl font-bold")
             ui.icon('sym_r_arrow_forward')
