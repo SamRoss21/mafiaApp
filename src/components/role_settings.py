@@ -1,8 +1,3 @@
-# alignment changer
-# modifier adder
-# item adder
-# handyman specifier
-
 from nicegui import ui
 from src.data import role_definitions, role
 from src.components import setup_summary

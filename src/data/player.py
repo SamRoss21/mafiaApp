@@ -2,13 +2,14 @@ import json
 from src.data import role_definitions, roles_setup, role, game_state
 
 class Player:
-    def __init__(self, id, player_name, role, actions=None, results=None, status=None):
+    def __init__(self, id, player_name, role, actions=None, results=None, status=None, current_items=None):
         self.id = id
         self.player_name = player_name
         self.role = role
-        self.actions = {'n0':'---'} if actions is None else actions
+        self.actions = {'n0':{'phrase':'---','command':None}} if actions is None else actions
         self.results = {'n0':'---'} if results is None else results
         self.status = 'alive' if status is None else status
+        self.current_items = [] if current_items is None else current_items
 
     @classmethod
     def from_json(cls, json_str):
@@ -21,6 +22,7 @@ class Player:
                 actions=player_data["actions"],
                 results=player_data["results"],
                 status=player_data["status"],
+                current_items=player_data["current_items"],
             )
         except json.JSONDecodeError:
             print(f"Skipping malformed JSON line: {json_str}")
@@ -30,18 +32,20 @@ class Player:
         self.status = status
         await game_state.save_game()
 
+    #give player an item
     async def addItem(self, item):
-        if item not in self.role.items:
-            self.role.items.append(item)
+        if item not in self.current_items:
+            self.current_items.append(item)
             await game_state.save_game()
     
+    #remove item from player
     async def removeItem(self, item):
-        if item in self.role.items:
-            self.role.items.remove(item)
+        if item in self.current_items:
+            self.current_items.remove(item)
             await game_state.save_game()
 
-    async def updateActions(self, action, night):
-        self.actions[night] = action
+    async def updateActions(self, action_phrase, action_command, night):
+        self.actions[night] = {'phrase':action_phrase, "command":action_command}
         await game_state.save_game()
 
     async def updateResults(self, result, night):
@@ -57,16 +61,6 @@ class Player:
             self.role.sub_roles[role.role_name].notes = 'expended'
             await game_state.save_game()
 
-    async def addItem(self, item):
-        if item not in self.items:
-            self.items.append(item)
-            await roles_setup.save_roles()
-    
-    async def removeItem(self, item):
-        if item in self.items:
-            self.items.remove(item)
-            await roles_setup.save_roles()
-
     def __str__(self):
         role_json = {
             "id":self.id,
@@ -75,5 +69,6 @@ class Player:
             "actions": self.actions,
             "results": self.results,
             "status": self.status,
+            "current_items": self.current_items
         }
         return json.dumps(role_json, default=str)

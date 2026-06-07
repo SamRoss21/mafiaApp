@@ -12,9 +12,14 @@ async def init_game(name:str):
     global filepath
     filepath = f'./games/{name}/'
     global filename
-    filename = f'{name}_game_state.txt'
+    filename = f'{name}_current_game_state.txt'
+    global game_state
+    game_state = {}
     for index, person in enumerate(players_setup.players):
-        game_state[f'{index}'] = player.Player(id=index, player_name=person, role=roles_setup.roles[index])
+        player_obj = player.Player(id=index, player_name=person, role=roles_setup.roles[index])
+        player_obj.current_items = player_obj.role.items.copy()
+        game_state[f'{index}'] = player_obj
+        
     await save_game()
 
 #load game state from file
@@ -22,7 +27,7 @@ async def load_game(name: str):
     global filepath
     filepath = f'./games/{name}/'
     global filename
-    filename = f'{name}_game_state.txt'
+    filename = f'{name}_current_game_state.txt'
     global game_state
     game_state = {}
     try:
@@ -38,9 +43,10 @@ async def load_game(name: str):
                     game_state[f'{person.id}'] = person
     except FileNotFoundError:
         # Create the file because it does not exist
-        print('Error: No Game State Found')
+        await init_game(name)
+        await load_game(name)
 
-#write game roles to file
+#write game state to file
 async def save_game():
     if filepath and filename:
         try:
@@ -49,3 +55,32 @@ async def save_game():
                     file.write(f"{person}\n")
         except FileNotFoundError:
             print('Error: No Game File')
+
+#write game roles to file
+async def save_night_state(name, night):
+    filepath = f'./games/{name}/'
+    file_name = f"{name}_{night}_state.txt"
+    try:
+        with open(filepath+file_name, "w") as file:
+            for person in game_state.values():
+                file.write(f"{person}\n")
+    except FileNotFoundError:
+        print('Error: No Game File')
+
+async def revert_to_night(name, night):
+    filepath = f'./games/{name}/'
+    file_name = f"{name}_{night}_state.txt"
+    try:
+        with open(filepath+file_name, "r") as file:
+            first_char = file.read(1)
+            if not first_char:
+                print(f"Error: {night} state has no data")
+            else:
+                file.seek(0)
+                for line in file:
+                    clean_json = line.strip()
+                    person = player.Player.from_json(clean_json)
+                    game_state[f'{person.id}'] = person
+                await save_game()
+    except FileNotFoundError:
+        print(f"Error: {night} state not found")

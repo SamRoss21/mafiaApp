@@ -1,8 +1,8 @@
-{"role_name": "Watcher", "targets": 1, "alignment": "Town", "verbs": ["watch"], "modifiers": [], "sub_roles": {}, "notes": "", "items": []}
-{"role_name": "Private Investigator", "targets": 1, "alignment": "Town", "verbs": ["investigate"], "modifiers": [], "sub_roles": {}, "notes": "", "items": []}
+{"role_name": "Poisoner", "targets": 1, "alignment": "Mafia", "verbs": ["poison"], "modifiers": [], "sub_roles": {}, "notes": "", "items": ["Tequila"]}
 {"role_name": "Janitor", "targets": 1, "alignment": "Mafia", "verbs": ["janitor"], "modifiers": [], "sub_roles": {}, "notes": "", "items": []}
-{"role_name": "Imposter", "targets": 2, "alignment": "Mafia", "verbs": ["imposter"], "modifiers": [], "sub_roles": {}, "notes": "", "items": []}
-{"role_name": "Tracker", "targets": 1, "alignment": "Town", "verbs": ["track"], "modifiers": [], "sub_roles": {}, "notes": "", "items": []}
-{"role_name": "Role Investigator", "targets": 1, "alignment": "Town", "verbs": ["role_investigate"], "modifiers": [], "sub_roles": {}, "notes": "", "items": []}
-{"role_name": "Survivor", "targets": 0, "alignment": "3rd Party", "verbs": [], "modifiers": [], "sub_roles": {}, "notes": "", "items": []}
-{"role_name": "Time Traveller", "targets": 1, "alignment": "Mafia", "verbs": ["kick_out_of_time", "speed_up", "slow_down"], "modifiers": [], "sub_roles": {}, "notes": "", "items": []}
+{"role_name": "Doctor", "targets": 1, "alignment": "Town", "verbs": ["doctor"], "modifiers": [], "sub_roles": {}, "notes": "", "items": []}
+{"role_name": "Hider", "targets": 1, "alignment": "Town", "verbs": ["hide"], "modifiers": [], "sub_roles": {}, "notes": "", "items": []}
+{"role_name": "Doubler", "targets": 1, "alignment": "Town", "verbs": ["double"], "modifiers": [], "sub_roles": {}, "notes": "", "items": []}
+{"role_name": "Jack of All Trades", "targets": 1, "alignment": "Town", "verbs": ["investigate", "protect", "roleblock", "kill"], "modifiers": [], "sub_roles": {}, "notes": "", "items": []}
+{"role_name": "Survivor", "targets": 0, "alignment": "3rd Party", "verbs": [], "modifiers": [], "sub_roles": {}, "notes": "", "items": ["Night Stone"]}
+{"role_name": "Inventor", "targets": -1, "alignment": "Town", "verbs": [], "modifiers": [], "sub_roles": {}, "notes": "", "items": ["Gun", "Day Stone", "Crystal Ball"]}

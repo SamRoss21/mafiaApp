@@ -100,11 +100,11 @@ class Role:
         if(self.items):
             name_string += " with"
             if len(self.items) == 1:
-                name_string += f" {role_definitions.items[self.items[0]]}"
+                name_string += f" {role_definitions.items[self.items[0]]['phrase']}"
             elif len(self.items) > 1:
                 for item in self.items[:-1]:
-                    name_string += f" {role_definitions.items[item]},"
-                name_string += f" and {role_definitions.items[self.items[-1]]}"
+                    name_string += f" {role_definitions.items[item]['phrase']},"
+                name_string += f" and {role_definitions.items[self.items[-1]]['phrase']}"
         return name_string
 
     def __str__(self):

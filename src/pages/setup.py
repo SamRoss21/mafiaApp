@@ -112,7 +112,22 @@ def player_list():
                 ui.label(player)
     card.make_sortable(handle='.handle', on_end=handle_player_reorder)
 
+async def setup_warning(type):
+    warning = ""
+    not_enough_roles = "Warning: Not all players have roles"
+    no_players = "Warning: Must have at least one player to start a game"
+    if(type==0):
+        warning = no_players
+    else:
+        warning = not_enough_roles
 
+    with ui.dialog() as warning_dialog, ui.card().classes("w-100 p-5"):
+        with ui.row().classes("w-full items-center flex-nowrap"):
+            ui.icon('sym_r_warning', size='lg').style('display:inline-flex')
+            ui.label(warning).classes("text-xl")
+        with ui.row().classes('w-full items-end justify-end'):
+            ui.button("Close", color=None, on_click=lambda: warning_dialog.close()).props('flat')
+        result = await warning_dialog
 
 
 @ui.page('/setup/{name}')
@@ -122,13 +137,21 @@ async def setup(name: str):
     to roles randomly or manually by arranging or randomizing the player/role 
     orders.
     """
+
     async def start_game():
         if len(players_setup.players) <= len(roles_setup.roles) and len(players_setup.players) > 0:
             await game_state.init_game(name)
             ui.navigate.to(f'/gameplay/{name}')
-        #TODO: add popup telling user to make sure there is a role per player
+        else:
+            if len(players_setup.players) == 0:
+                await setup_warning(0)
+            else:
+                await setup_warning(1)
 
-    ui.label(f'Game Setup: {name}').classes("text-3xl font-bold mb-2")
+    with ui.row().classes("items-end"):
+        with ui.button(color=None, on_click=lambda: ui.navigate.to(f"/")).props("round flat"):
+            ui.icon("sym_r_home", size="lg")
+        ui.label(f'Game Setup: {name}').classes("text-3xl font-bold")
         
     #Widget for displaying selected players and roles and summary
     with ui.scroll_area().classes('h-110 w-full'):
